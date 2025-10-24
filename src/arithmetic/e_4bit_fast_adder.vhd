@@ -17,8 +17,8 @@ architecture a_4bit_fast_adder of e_4bit_fast_adder is
 begin
     -- Stage 0: generate & propagate
     gen_gp: for j in 0 to 3 generate
-        g(j) <= byte1(j) and byte2(j);
-        p(j) <= byte1(j) xor byte2(j);
+        g(j) <= byte1(j) and (byte2(j) xor carry_in);
+        p(j) <= byte1(j) xor (byte2(j) xor carry_in);
     end generate;
 
     -- Stage 1: distance 1

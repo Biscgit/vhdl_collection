@@ -27,22 +27,25 @@ begin
         variable actual_sum    : integer;
         variable actual_cout   : integer;
     begin
-        carry_in <= '0';
-                    wait for 2 ns;
-        for a in 0 to 15 loop
-            for b in 0 to 15 loop
-                for cin in 0 to 1 loop
+        for cin in 0 to 1 loop
+            if cin = 1 then
+                carry_in <= '1';
+            else
+                carry_in <= '0';
+            end if;
+            for a in 0 to 15 loop
+                for b in 0 to 15 loop
                     byte1    <= std_logic_vector(to_unsigned(a, 4));
                     byte2    <= std_logic_vector(to_unsigned(b, 4));
-                    if cin = 1 then
-                        carry_in <= '1';
-                    else
-                        carry_in <= '0';
-                    end if;
                     wait for 2 ns;
 
-                    expected_sum  := (a + b + cin) mod 16;
-                    expected_cout := (a + b + cin) / 16;
+                    if cin = 1 then
+                        expected_sum  := (a - b) mod 16;
+                        expected_cout := (16 + a - b) / 16;
+                    else
+                        expected_sum  := (a + b) mod 16;
+                        expected_cout := (a + b) / 16;
+                    end if;
                     actual_sum    := to_integer(unsigned(s));
                     if carry_out = '1' then
                         actual_cout := 1;
