@@ -6,26 +6,18 @@ entity tb_e_double_dabble is
 end entity;
 
 architecture sim of tb_e_double_dabble is
-    signal bin_in      : std_logic_vector(7 downto 0);
-    signal bcd_ones    : std_logic_vector(3 downto 0);
-    signal bcd_tens    : std_logic_vector(3 downto 0);
-    signal bcd_hundreds: std_logic_vector(3 downto 0);
+    signal bin_in       : std_logic_vector(7 downto 0);
+    signal bcd_ones     : std_logic_vector(3 downto 0);
+    signal bcd_tens     : std_logic_vector(3 downto 0);
+    signal bcd_hundreds : std_logic_vector(3 downto 0);
 
-    -- Helper: convert std_logic_vector to string (binary)
-    function to_bin_str(v : std_logic_vector) return string is
-        variable s : string(1 to v'length);
-        variable idx : integer := 1;
+    function to_bcd(value : integer) return std_logic_vector is
+        variable bcd : std_logic_vector(3 downto 0);
     begin
-        for i in v'reverse_range loop
-            if v(i) = '1' then
-                s(idx) := '1';
-            else
-                s(idx) := '0';
-            end if;
-            idx := idx + 1;
-        end loop;
-        return s;
+        bcd := std_logic_vector(to_unsigned(value, 4));
+        return bcd;
     end function;
+
 begin
     uut: entity work.e_double_dabble
         port map (
@@ -36,35 +28,39 @@ begin
         );
 
     process
-        variable input_dec : integer;
-        variable dec_hundreds    : integer;
-        variable dec_tens        : integer;
-        variable dec_ones        : integer;
-        variable bcd_combined : unsigned(11 downto 0);
+        variable dec_val : integer;
+        variable exp_ones, exp_tens, exp_hundreds : integer;
     begin
-        report " dec_in | bin_in    | BCD_out (hundreds tens ones) | dec_out";
-        report "-------------------------------------------------------------";
-
         for i in 0 to 255 loop
             bin_in <= std_logic_vector(to_unsigned(i, 8));
-            wait for 1 ns;
+            wait for 2 ns;
 
-            input_dec := i;
-            bcd_combined := unsigned(bcd_hundreds & bcd_tens & bcd_ones);
-            dec_hundreds := to_integer(unsigned(bcd_hundreds));
-            dec_tens     := to_integer(unsigned(bcd_tens));
-            dec_ones     := to_integer(unsigned(bcd_ones));
+            dec_val := i;
+            exp_hundreds := dec_val / 100;
+            exp_tens     := (dec_val / 10) mod 10;
+            exp_ones     := dec_val mod 10;
 
-            report "  " & integer'image(input_dec)
-                & "    | " & to_bin_str(bin_in)
-                & " | " & to_bin_str(bcd_hundreds) & " "
-                            & to_bin_str(bcd_tens) & " "
-                            & to_bin_str(bcd_ones)
-                & "        | " & integer'image(dec_hundreds)
-                & "            | " & integer'image(dec_tens)
-                & "       | " & integer'image(dec_ones);
+            assert to_integer(unsigned(bcd_hundreds)) = exp_hundreds
+                report "Mismatch at " & integer'image(i) & ": hundreds expected " &
+                       integer'image(exp_hundreds) & " got " &
+                       integer'image(to_integer(unsigned(bcd_hundreds)))
+                severity failure;
+
+            assert to_integer(unsigned(bcd_tens)) = exp_tens
+                report "Mismatch at " & integer'image(i) & ": tens expected " &
+                       integer'image(exp_tens) & " got " &
+                       integer'image(to_integer(unsigned(bcd_tens)))
+                severity failure;
+
+            assert to_integer(unsigned(bcd_ones)) = exp_ones
+                report "Mismatch at " & integer'image(i) & ": ones expected " &
+                       integer'image(exp_ones) & " got " &
+                       integer'image(to_integer(unsigned(bcd_ones)))
+                severity failure;
         end loop;
 
+        report "All test cases passed!" severity note;
         wait;
     end process;
-end architecture sim;
+end architecture;
+

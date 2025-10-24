@@ -21,8 +21,8 @@ begin
     carry(0) <= carry_in;
 
     gen: for j in 0 to 3 generate
-        in_t <= byte2(j) xor carry_in;
-        I_S: e_1bit_adder port map(byte1(j), in_t, carry(j), s(j), carry(j+1));
+        -- in_t <= byte2(j); -- xor carry_in;
+        I_S: e_1bit_adder port map(byte1(j), byte2(j), carry(j), s(j), carry(j+1));
     end generate;
 
     carry_out <= carry(4);
