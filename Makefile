@@ -48,6 +48,13 @@ run_tb: analyze
 	$(GHDL) -e $(TB)
 	$(GHDL) -r $(TB)
 
+# Run with VCD dump
+wave: elab
+	@for tb in $(TBS); do \
+		echo "Running $$tb with waveform..."; \
+		$(GHDL) -r $$tb --vcd=waves/$$tb.vcd; \
+	done
+
 # Clean intermediate files
 clean:
 	@echo "Cleaning GHDL intermediate files..."

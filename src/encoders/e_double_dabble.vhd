@@ -31,7 +31,7 @@ begin
     in_z <= s_x(2 downto 0) & bin_in(1);
 
     in_w <= '0' & s_t(3) & s_u(3) & s_v(3);
-    in_y <= s_w(3 downto 1) & s_x(3);
+    in_y <= s_w(2 downto 0) & s_x(3);
 
     -- Chain of dabble stages
     t_stage: e_dabble port map(in_t, s_t);
@@ -46,4 +46,5 @@ begin
     -- Output assignment
     bcd_hundreds <= "00" & s_w(3) & s_y(3);
     bcd_tens     <= s_y(2 downto 0) & s_z(3);
+    bcd_ones     <= s_z(2 downto 0) & bin_in(0);
 end architecture a_double_dabble;

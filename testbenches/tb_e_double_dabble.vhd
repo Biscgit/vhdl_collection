@@ -45,7 +45,7 @@ begin
         report " dec_in | bin_in    | BCD_out (hundreds tens ones) | dec_out";
         report "-------------------------------------------------------------";
 
-        for i in 0 to 40 loop
+        for i in 0 to 255 loop
             bin_in <= std_logic_vector(to_unsigned(i, 8));
             wait for 1 ns;
 
