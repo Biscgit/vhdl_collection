@@ -11,7 +11,7 @@ architecture sim of tb_e_4bit_fast_adder_wave is
     signal carry_out    : std_logic;
     signal s            : std_logic_vector(3 downto 0);
 begin
-    uut: entity work.e_4bit_adder
+    uut: entity work.e_4bit_fast_adder
         port map (
             byte1     => byte1,
             byte2     => byte2,
