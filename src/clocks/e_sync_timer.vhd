@@ -20,7 +20,7 @@ entity e_sync_timer is
 end entity e_sync_timer;
 
 architecture a_sync_timer of e_sync_timer is
-    constant LIMIT: unsigned := COUNTER_LIMIT - to_unsigned(1, 1);
+    constant LIMIT: unsigned := COUNTER_LIMIT - 1;
     signal slv_internal: unsigned(COUNTER_LIMIT'length - 1 downto 0);
 begin
     slv_counter_out <= slv_internal;
